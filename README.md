@@ -1,6 +1,9 @@
 # DM2905 - StressPort: A VR Study Design for Teleportation Under Game-Like Stressful Conditions
 <img width="100%" alt="image" src="Assets/Art/Images/cover_vr_stressport.jpg">
 
+# DISCLAIMER
+The following readme is from the previous iteration of the project, and it is not up to date with the current state of the project. The readme will be updated in the next iteration, but for now, it serves as a reference for the overall architecture and design of the project.
+
 ## About the study
 ### Objective
 The experiment is designed to investigate how exposure to game-like stressors affects teleportation performance, perceived stress, and workload in VR environments.
