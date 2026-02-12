@@ -1,8 +1,5 @@
 # DM2905 - StressPort: A VR Study Design for Teleportation Under Game-Like Stressful Conditions
-<img width="100%" alt="image" src="Assets/Art/Images/cover_vr_stressport.jpg">
-
-# DISCLAIMER
-The following readme is from the previous iteration of the project, and it is not up to date with the current state of the project. The readme will be updated in the next iteration, but for now, it serves as a reference for the overall architecture and design of the project.
+<img width="100%" alt="image" src="Images/Example.png">
 
 ## About the study
 ### Objective
@@ -12,117 +9,112 @@ The experiment is designed to investigate how exposure to game-like stressors af
 Gathering reliable results from user evaluations is crucial for informing design decisions. While prior studies have explored stress responses during gameplay in fully developed or modified games, the intermediate step between isolated lab-based evaluations and in-game scenarios remains underexplored. This research seeks to bridge that gap by designing a test environment that enables the researcher to examine the impact of stressors in a controlled VR teleportation evaluation task, simulating high-arousal states typical of fast-paced video games.
 
 ### Experience Overview
-In this experimental design, the subjects have to teleport between 6 hexagon- layout platforms. Each platform represented a different color (red, blue, green, yellow, orange, and purple). Subjects are given one teleportation instruction at a time in the form of color displayed on a VR GUI to move to a destination. Once at the destination platform, they activate a mechanism to cue the system for the next platform.
+In this experimental design, the subjects have to teleport between 6 hexagon- layout platforms. Each platform represented a different color (red, blue, green, yellow, cyan, and purple). Subjects are given one teleportation instruction at a time in the form of color displayed on a VR GUI to move to a destination.
+Once at the destination platform, they activate a mechanism to cue the system for the next platform.
 
-This instance of the prototype includes two teleportation methods and three game stressors, but further methods and stressors can be added according to the research’s needs. Sound feedback, dynamic Stroop rules, and adjustments to attention-demanding stimuli are critical next steps for enhancing the prototype’s functionality. The design hopes to help advance the understanding of VR teleportation evaluation under game-like stressors and serve as a starting point for future researchers and VR game developers.
+This instance of the prototype includes two teleportation methods and baseline + three game stressors, but further methods and stressors can be added according to the research’s needs. Sound feedback, dynamic Stroop rules, and adjustments to attention-demanding stimuli are critical next steps for enhancing the prototype’s functionality. The design hopes to help advance the understanding of VR teleportation evaluation under game-like stressors and serve as a starting point for future researchers and VR game developers.
 
 ## Dependencies
-- Platfrom: Meta Quest 3 VR headset using Meta’s Interaction SDK 
-- Unity version 2022.3.46f1 using the Built-in Render Pipeline
+- Platfrom: Meta Quest 3S VR headset using the OpenXR Plugin and Unity's Interaction Toolkit SDK 
+- Unity version 6000.0.62f1 using the Built-in Render Pipeline
 - OpenXR SDK and the virtual simulator (powered using Vulkan)
-*When the application is installed onto the HMD, the viewport can be streamed to a MacBook Pro via the Meta Quest Developer Hub for real-time monitoring.
+*When the application is installed onto the HMD, the viewport can be streamed to a Device via the Meta Quest Developer Hub for real-time monitoring.
 
 ## Directories
-The important files can be found in the following locations, any other files are dependencies from pluggings and they must not be removed or edited unless you know what you are doing. The **main scene** is `TeleportationOnRightHandOnly` inside the `/Scenes/Experiment`.
+The important files can be found in the following locations, any other files are dependencies from pluggings and they must not be removed or edited unless you know what you are doing. The **main scene** is `MainScene` inside the `/Scenes`.
 ```bash
 Project/
 ├── Assets/
-│   ├── Art/
-│   │   ├── Images/
-│   │   ├── Materials/
-│   │   ├── Mesh/
-│   │   └── Textures/
-│   ├── Prefabs/
-│   ├── Scenes/
-│   │    ├── Experiment/ TeleportationOnRightHandOnly
-│   │    └── Playgrounds/
-│   ├── Scriptable Objects/
-│   │   └── Platforms/
-│   └── Scripts/
-│       ├── Controllers/
-│       ├── Experiment Variables/
-│       ├── Manager/
-│       ├── Persistence/
-│       └── States/
+│   ├───Prefabs
+│   │   └───Color Indicator Materials
+│   ├───Scenes
+│   │   └───SampleScene
+│   ├───Scripts
+│   ├───Settings
+│   │   ├───Build Profiles
+│   │   └───Project Configuration
+│   ├───StreamingAssets
+│   ├───XR
+│   │   ├───AndroidXR
+│   │   ├───Loaders
+│   │   ├───Resources
+│   │   ├───Settings
+│   │   ├───Temp
+│   │   └───UserSimulationSettings
+│   │       └───Resources
+│   └───XRI
+│       └───Settings
+│           └───Resources
 
 ```
 **About Scripts:**
-`Controllers`: Manages player and object interactions.
-`Experiment Variables`: Handles specific experimental conditions and variables.
-`Manager`: Oversees overarching game logic or systems.
-`Persistence`: Scripts for saving/loading data.
-`States`: State machine implementation for controlling various behaviors.
+`Condition Manager`: Manages Condition Switching.
+`Game Manager`: Handles specific experimental conditions and variables. Oversees overarching game logic or systems.
+`Logger`: Logs data during the experiment, such as participant actions, timestamps, and experimental conditions. This data can be used for analysis after the experiment is completed.
 
 ## Overall architecture
 
-`ExperimentManager`
-1. `OnConditionChanged`: Triggered when a new experimental condition is set, notifying subscribers about the change.
-2. `OnConditionTerminated`: Invoked when the current experimental condition is forcibly terminated, notifying subscribers about the termination.
-3. `OnConditionFulfilled`: Raised when tasks for the current condition are completed successfully, allowing subscribers to react to the condition's fulfillment.
-4. `OnExperimentCompleted`: Fired when all experimental conditions are fulfilled, signaling the end of the experiment.
-5. `OnExperimentReset`: Activated when the experiment is reset, notifying subscribers to reinitialize or prepare for a new round.
+`GameManager`
+1. `My Timer (Game Timer)`: Drives per-round timing and countdown behavior.
+2. `Setting Window (Setting Panel)`: Settings UI container.
+3. `Task Window (Task Panel)`: Task UI container.
+4. `Experiment Window (Study Panel)`: Study flow UI container.
+5. `Color Display (Text Mesh Pro UGUI)`: Displays the target color prompt.
+6. `Round Timer Text (Text Mesh Pro UGUI)`: Displays remaining round time.
+7. `Task Description Text (Text Mesh Pro UGUI)`: Displays current task instructions.
+8. `Center Platform (Teleport Main Area Setup)`: Reference to the center/starting platform.
+9. `Input Field Manager (ID INPUT)`: Participant ID input handling.
+10. `My Condition Manager (Condition Manager)`: Condition switching and state coordination.
+11. `Study_Logger (Logger)`: Study/session logging.
+12. `Teleportation Mode Controller (Teleport Interactor)`: Teleport mode configuration.
+13. `Teleport Logger (Logger)`: Teleportation event logging.
+14. `XR Ray Interactor (Teleport Interactor)`: XR ray reference for teleport targeting.
+15. `Study Manager (Study Panel)`: Study UI controller.
+16. `Is Game Running`: Runtime flag for active session.
+17. `Is Practice Run`: Runtime flag for practice vs trial.
+18. `Score Correct / Wrong / Skipped`: Per-round scoring counters.
+19. `Current Target Color`: Current target state.
+20. `Time Per Round`: Configured time per round.
+21. `End Condition (Rounds Completed)`: Condition to end the task.
+22. `Platform Max`: Max platforms in the sequence.
+23. `Time Max`: Max session time.
 
-`GameplayManager`
-1. `OnPracticeStandby`: Triggered when the player is in a standby state, waiting to manually start the practice tasks.
-2. `OnPracticeBegin`: Raised when the player begins performing the practice tasks.
-3. `OnPracticeEnd`: Fired when all practice tasks are completed.
-4. `OnPracticeEndAndTrialStandby`: Activated after completing all practice tasks, signaling the player can manually begin the trial tasks.
-5. `OnTrialStandby`: Triggered when the player is in a standby state, waiting to manually start the trial tasks.
-6. `OnTrialBegin`: Invoked when the player starts performing the trial tasks.
-7. `OnTrialEnd`: Fired when all trial tasks are completed.
-8. `OnGameOver`: Signals the end of the gameplay session, used to clean up or reset state.
+**Key methods**
+1. `SetupExperiment()`: Builds the Latin-square condition list and configures the study UI.
+2. `StartTheWholeGame(bool practice)`: Starts a practice or trial run and initializes timers.
+3. `EndGame()`: Stops the session, logs results, and restores menus.
+4. `PickNewColor(string colorToAvoid)`: Chooses the next color prompt with optional avoidance.
+5. `CheckIfCorrect(string platformName)`: Scores a landing and logs teleport data.
+6. `OnPlatformTeleport(string platformName)`: Entry point when a platform is reached.
 
-`GameState`
+`ConditionManager`
+1. `StressMode`: None, TimeLimit, ColorMismatch, Shrinking.
+2. `ScenarioType`: Directional or Normal teleportation.
+3. `GenerateLatinSquareConditionList(int participantID)`: Creates the 2-block, 4-condition Latin square.
+4. `SelectStressMode(int stressID)`: Switches the active stressor by ID.
+5. `SetTailCondition(TrialCondition trialCondition)`: Applies stressor and teleportation scenario.
+6. `SetOrietationalTeleportation(bool setTrue)`: Toggles orientation-based teleportation.
+7. `GetCurrentStressModeID()`: Returns the current stressor ID.
+8. Wrapper buttons: `NoStress()`, `Time()`, `Mismatch()`, `Shrinking()`.
 
-**Events**
-1. `OnNewSequence`: Raised when a new sequence of task colors is created. Observers can subscribe to this event to receive the stack of colors forming the new sequence.
-OnNewNextColor:
-
-2. `Description`: Triggered whenever the next task color is determined during a sequence. Observers receive details about the stimulus type, next color, and whether the previous task was completed successfully.
-**Observer-Dependent Methods**
-1. `Subscribe(IObserver<GameStateData> observer)`:Adds a new observer to the list of observers. Returns an IDisposable object to allow the observer to unsubscribe later.
-2. `NotifyObservers()`:Notifies all registered observers about the current game state change. Sends the updated GameStateData.
-3. `NotifyObserversForTheLastTime()`:Sends a final notification to all observers and ensures they are informed of the game's end. It traverses the observer list in reverse to prevent issues when removing observers.
 
 ## Features
-- **Start:** The primary button on `GameplayGUI` children call `BeginGame` on GameplayManager
-**Platforms:** `EnterGameplay` in `ExprimentManager` and in `GameplayManager` triggers the setup of the platforms.
-<img width="50%" alt="image" src="Assets/Art/Images/vr_scene_layout.jpg">
+- **Start:** Set the participant ID and press the *Start* button to begin the experiment. This will trigger the `StartExperiment()` method in the `GameManager` class, which will set up the initial conditions for the experiment and start the game loop.
+The participant ID is stored in the `ParticipantData` Scriptable Object, which can be accessed throughout the experiment to log data and track progress.
+Also with the participant ID set, the experiment can proceed.
 
-- **Hard exit:** Press both primary buttons for 5 seconds to terminate the task.
-- **Color generation:** The colors are generated using a Graph, and a set of coordinates `{ -3, -2, -1, 1, 2, 3 }` that represent the number of steps from the player current position and the direction: `-` left and `+` right. 
-`GenerateRandomCoordinateList` inside `GameState`, creates the Graph. Read *Session 2024-11-05: Adding Graph and Distances* for more details.
-<img width="50%" alt="image" src="Assets/Art/Images/vr_color_gui.jpg"> 
-
+- **Latin-square sequencing:** `SetupExperiment()` builds a balanced 2-block sequence based on participant ID.
+- **Color generation:** The color prompt is generated by `PickNewColor()`, which can avoid repeating the current platform color.
 - **Participant and variables Data:** The information about what stimuli are active in a task is in `ParticipantData` Scriptable Object. The GUI writes directly to its field to toggle variables.
-<img width="50%" alt="image" src="Assets/Art/Images/vr_new_gui.jpg"> 
 
-- **Timer:** This variables in controlled by the GameplayManager via the `CountdownToReachPlaform()` method.
-- **Biased instruction:** This stimuli is controll inside the `ColorPromptController` class, in the `UpdateColorPromptDisplay()` method. A memeber variable `m_participantData` referencing `ParticipantData` game object expose the property `.GameStressorBiasedInstruction`.
-- **Shrinking platforms:** This stimuli is controlled by `ShrinkPlatformController`, this component is attached to a GameObject ShrinkController inside the parent prefab FloatingPlatform. The GameObject TeleportationBlocker is what causes the teleportation area to apparently shrink. It is a torus that bloacks the Nav Mesh.
-<img width="50%" alt="image" src="Assets/Art/Images/turus.png">
+- **Time limit stressor:** Round timer counts down and auto-advances on timeout, incrementing skipped.
+- **Color mismatch stressor:** Prompt text can intentionally differ from the actual target color.
+- **Shrinking stressor:** Teleportation blocker shrinks the nav mesh area around platforms.
+- **End conditions:** Session end can be time-based, round-based, or both.
+- **Logging:** Study and teleport logs are written on trial completion; practice runs skip logging. The Logs can be found under `Android/data/<AppName>/files`
 
-## Backlog
-- [ ]  Logging variables in CSV and store the file in the Headset
-- [ ]  Sound feedback when color prompt changes
-- [ ]  Sound feedback when a platform gets activated
-- [ ]  Sound feedback when arriving at the wrong platform
-- [x] Finish gameloop
-    - [x] Connect the condition with the game state
-    - [x] Update the game loop to have a practice and trial color sequence
-    - [x] GUI for *Start Practice*, then for "Practice complete now" *Start Trial*.
-    - [x] GUI once the Trial is completed (Condition fulfilled), *Back to conditions*
-    - [x] The color prompt shows "COLOR" or "WORD" depending on the presence of the congnitive interference
-- [x] Menu to hide the conditions
-- [x] Confirmation feature to manually reset, terminate and fulfill each condition and the experiment
-- [x] Test the conditions manu in VR
-- [x] Hide and show the conditions menu
-- [x] Begin the experiment with a subject ID, set the ID either by keyboard input, or random.
+<img width="100%" alt="image" src="Images/Menu in Run.png">
 
 ## Known issues
 - The color prompter sometimes gives a color that corresponds to the current platform the player is standing.
-- The teleportation orientation feature disables object grabbing when both functionalities are active in the same scene.
-
-### Devlogs
-<img width="1014" alt="image" src="https://github.com/user-attachments/assets/0547c2ad-07c8-4b45-baf4-780802d84d71">
-
+- Teleportation on the right platform sometimes fails to register
