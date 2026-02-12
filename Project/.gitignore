@@ -5,12 +5,15 @@
 .utmp/
 /[Ll]ibrary/
 /[Tt]emp/
+/[Tt]est/
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
+/[Oo]ut/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 *.log
+/.plastic/
 
 # By default Unity supports Blender asset imports; *.blend1 files should not be committed.
 *.blend1
